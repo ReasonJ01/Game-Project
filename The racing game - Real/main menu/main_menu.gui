@@ -11,8 +11,8 @@ background_color {
 }
 nodes {
   position {
-    x: 500.0
-    y: 547.0
+    x: 480.0
+    y: 550.0
     z: 0.0
     w: 1.0
   }
@@ -114,7 +114,7 @@ nodes {
     z: 1.0
     w: 1.0
   }
-  adjust_mode: ADJUST_MODE_FIT
+  adjust_mode: ADJUST_MODE_ZOOM
   line_break: false
   parent: "title"
   layer: ""
@@ -128,8 +128,8 @@ nodes {
 }
 nodes {
   position {
-    x: 500.0
-    y: 251.0
+    x: 480.0
+    y: 350.0
     z: 0.0
     w: 1.0
   }
@@ -245,8 +245,8 @@ nodes {
 }
 nodes {
   position {
-    x: 803.0
-    y: 251.0
+    x: 130.0
+    y: 200.0
     z: 0.0
     w: 1.0
   }
@@ -362,8 +362,8 @@ nodes {
 }
 nodes {
   position {
-    x: 200.0
-    y: 250.0
+    x: 830.0
+    y: 200.0
     z: 0.0
     w: 1.0
   }
@@ -479,8 +479,8 @@ nodes {
 }
 nodes {
   position {
-    x: 491.0
-    y: 54.0
+    x: 480.0
+    y: 200.0
     z: 0.0
     w: 1.0
   }

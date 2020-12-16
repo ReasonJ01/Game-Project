@@ -23,7 +23,7 @@ end
 
 function on_input(self, action_id, action)
 	--Check if mouse button clicked/ screen pressed
-	if action_id == hash("touch") then
+	if action_id == hash("touch") and action.released then
 		
 		--if the "touch" action happens within the bounds of the "upgrade box". 
 		if gui.pick_node(gui.get_node("upgrade"), action.x, action.y) then
