@@ -1,4 +1,4 @@
-image: "/graphics/Tilesheet/tiles_sheet.png"
+image: "/graphics/UI/Tilesheet/tiles_sheet.png"
 tile_width: 64
 tile_height: 64
 tile_margin: 0

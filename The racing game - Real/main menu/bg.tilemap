@@ -1,4 +1,4 @@
-tile_set: "/graphics/Tilesheet/Tiles.tilesource"
+tile_set: "/graphics/UI/Tilesheet/Tiles.tilesource"
 layers {
   id: "layer1"
   z: 0.0

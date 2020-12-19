@@ -15,7 +15,7 @@ components {
 }
 components {
   id: "segment1_script"
-  component: "/game/course segments/segment1.script"
+  component: "/game/course segments/segment.script"
   position {
     x: 0.0
     y: 0.0
@@ -31,11 +31,11 @@ components {
 embedded_components {
   id: "collisionobject"
   type: "collisionobject"
-  data: "collision_shape: \"/game/course segments/segment2.tilemap\"\n"
-  "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
+  data: "collision_shape: \"\"\n"
+  "type: COLLISION_OBJECT_TYPE_TRIGGER\n"
   "mass: 0.0\n"
-  "friction: 0.1\n"
-  "restitution: 0.5\n"
+  "friction: 0.0\n"
+  "restitution: 0.0\n"
   "group: \"default\"\n"
   "mask: \"player\"\n"
   "mask: \"default\"\n"

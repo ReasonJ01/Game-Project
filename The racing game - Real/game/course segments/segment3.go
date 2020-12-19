@@ -15,7 +15,7 @@ components {
 }
 components {
   id: "segment1_script"
-  component: "/game/course segments/segment1.script"
+  component: "/game/course segments/segment.script"
   position {
     x: 0.0
     y: 0.0

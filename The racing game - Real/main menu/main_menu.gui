@@ -1,7 +1,11 @@
 script: "/main menu/main_menu.gui_script"
 fonts {
   name: "system_font"
-  font: "/builtins/fonts/system_font.font"
+  font: "/graphics/UI/pirate_font.font"
+}
+textures {
+  name: "buttons"
+  texture: "/graphics/buttons.atlas"
 }
 background_color {
   x: 0.0
@@ -23,14 +27,14 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 1.4
+    y: 1.4
     z: 1.0
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
@@ -42,7 +46,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "title"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -120,7 +124,7 @@ nodes {
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 1.0
+  outline_alpha: 0.0
   shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
@@ -129,7 +133,7 @@ nodes {
 nodes {
   position {
     x: 480.0
-    y: 350.0
+    y: 420.0
     z: 0.0
     w: 1.0
   }
@@ -146,20 +150,20 @@ nodes {
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
   color {
-    x: 0.3019608
+    x: 0.9019608
     y: 0.5019608
     z: 0.3019608
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "play"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -245,8 +249,8 @@ nodes {
 }
 nodes {
   position {
-    x: 130.0
-    y: 200.0
+    x: 480.0
+    y: 300.0
     z: 0.0
     w: 1.0
   }
@@ -263,20 +267,20 @@ nodes {
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
   color {
-    x: 0.3019608
-    y: 0.4
-    z: 0.8
+    x: 0.9019608
+    y: 0.5019608
+    z: 0.3019608
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "leaderboard"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -362,8 +366,8 @@ nodes {
 }
 nodes {
   position {
-    x: 830.0
-    y: 200.0
+    x: 480.0
+    y: 180.0
     z: 0.0
     w: 1.0
   }
@@ -380,8 +384,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
@@ -393,7 +397,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "upgrade"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -480,7 +484,7 @@ nodes {
 nodes {
   position {
     x: 480.0
-    y: 200.0
+    y: 60.0
     z: 0.0
     w: 1.0
   }
@@ -497,20 +501,20 @@ nodes {
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
   color {
-    x: 0.5019608
-    y: 0.0
-    z: 0.0
+    x: 0.9019608
+    y: 0.5019608
+    z: 0.3019608
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "exit"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -588,7 +592,7 @@ nodes {
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 1.0
+  outline_alpha: 0.0
   shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0

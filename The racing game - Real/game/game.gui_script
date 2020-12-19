@@ -1,0 +1,74 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	-- Disable play button, exit button, game over scrren
+	gui.set_enabled(gui.get_node("play"), false)
+	gui.set_enabled(gui.get_node("exit"), false)
+	gui.set_enabled(gui.get_node("gameover"), false)
+	--Initial lives
+	lives = 3
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show") then
+		-- If player out of lives then show game over screen and exit button, else show play button
+		if lives <= 0 then 
+			gui.set_enabled(gui.get_node("gameover"), true)
+			-- Sets game over score value to the players score
+			gui.set_text(gui.get_node("go_score"), gui.get_text(gui.get_node("score")))
+			gui.set_enabled(gui.get_node("exit"), true)
+		else 
+			gui.set_enabled(gui.get_node("play"), true)
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") then
+		--Change button state to clicked
+		if gui.pick_node(gui.get_node("play"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("play"), "clicked")
+			
+		elseif gui.pick_node(gui.get_node("exit"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("exit"), "clicked")
+		end
+	end
+
+	--When button released load
+	if action_id == hash("touch") and action.released then
+			-- If play clicked and player has lives
+		if gui.pick_node(gui.get_node("play"), action.x, action.y) and lives > 0 then
+			-- Hide play button
+			gui.set_enabled(gui.get_node("play"), false)
+			-- Unpause game
+			msg.post("/player#player", "unpause")
+			-- Get the current life icon	
+			current_life = "live" .. lives
+			-- Hide current life icon
+			gui.set_enabled(gui.get_node(current_life),false)
+			-- Update lives
+			lives = lives - 1
+			
+		elseif  gui.pick_node(gui.get_node("exit"), action.x, action.y) then
+			-- Load main menu
+			msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
+		end
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

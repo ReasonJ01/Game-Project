@@ -7,6 +7,7 @@ shared_state = 1
 [display]
 width = 960
 height = 640
+update_frequency = 0
 
 [android]
 input_method = HiddenInputField
@@ -15,5 +16,5 @@ input_method = HiddenInputField
 title = The racing game - Real
 
 [physics]
-debug = 1
+debug = 0
 

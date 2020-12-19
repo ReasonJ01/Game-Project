@@ -1,28 +1,25 @@
+go.property("speed", 300) --create speed property
+
 function init(self)
-	self.speed = 300
-	width, height = window.get_size()
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
 end
 
 function update(self, dt)
+	-- Get, modify and update segment pos
 	pos = go.get_position()
-	pos.y = pos.y - self.speed * dt
+	pos.y = pos.y - self.speed * dt 
 	go.set_position(pos)
+
+	--When the segment is off screen
 	if pos.y <= -640 then
 		go.delete()
-		msg.post("/map_gen#segment_factory", "top")
+		msg.post("/map_gen#segment_factory", "bottom") --Send message to the factory script
 	end
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
 end
 
 function on_input(self, action_id, action)

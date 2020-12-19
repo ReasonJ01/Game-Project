@@ -1,7 +1,11 @@
 script: "/leaderboard/leaderboard.gui_script"
 fonts {
   name: "system_font"
-  font: "/builtins/fonts/system_font.font"
+  font: "/graphics/UI/pirate_font.font"
+}
+textures {
+  name: "buttons"
+  texture: "/graphics/buttons.atlas"
 }
 background_color {
   x: 0.0
@@ -11,8 +15,8 @@ background_color {
 }
 nodes {
   position {
-    x: 800.0
-    y: 150.0
+    x: 840.0
+    y: 50.0
     z: 0.0
     w: 1.0
   }
@@ -29,20 +33,20 @@ nodes {
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 190.0
+    y: 49.0
     z: 0.0
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.9019608
+    y: 0.5019608
+    z: 0.3019608
     w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "buttons/idle"
   id: "back_box"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -104,9 +108,9 @@ nodes {
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   outline {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   shadow {
@@ -121,7 +125,7 @@ nodes {
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 1.0
+  outline_alpha: 0.0
   shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
