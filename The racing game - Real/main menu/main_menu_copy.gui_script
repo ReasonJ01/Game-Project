@@ -22,7 +22,11 @@ function on_message(self, message_id, message, sender)
 end
 
 function button_click(self, node)
-	if node == gui.get_node("upgrade") then
+	timer.delay(1, false, msg.post("controller:/controller_object#controller", "load_proxy", {name = "upgrade"}))
+	if node == gui.get_node("test") then
+		print("boop")
+	elseif node == gui.get_node("upgrade") then
+		--timer.delay(1, false, msg.post("controller:/controller_object#controller", "load_proxy", {name = "upgrade"}))
 		msg.post("controller:/controller_object#controller", "load_proxy", {name = "upgrade"})
 
 	elseif node == gui.get_node("leaderboard") then
@@ -45,14 +49,40 @@ function on_input(self, action_id, action)
 			gui.play_flipbook(gui.get_node("upgrade"), "bar_clicked", button_click)
 
 		elseif gui.pick_node(gui.get_node("leaderboard"), action.x, action.y) then
-			gui.play_flipbook(gui.get_node("leaderboard"), "bar_clicked", button_click)
+			gui.play_flipbook(gui.get_node("leaderboard"), "clicked")
 
 		elseif gui.pick_node(gui.get_node("play"), action.x, action.y) then
-			gui.play_flipbook(gui.get_node("play"), "bar_clicked", button_click)
+			gui.play_flipbook(gui.get_node("play"), "clicked")
+			
+		elseif gui.pick_node(gui.get_node("test"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("test"), "bar_clicked", button_click)
 
 		elseif gui.pick_node(gui.get_node("exit"), action.x, action.y) then
-			gui.play_flipbook(gui.get_node("exit"), "bar_clicked", button_click)
+			gui.play_flipbook(gui.get_node("exit"), "clicked")
 		end
+	end
+	
+	if action_id == hash("touch") and action.released then
+		
+		--if the "touch" action happens within the bounds of the "upgrade box". 
+		if gui.pick_node(gui.get_node("upgrade"), action.x, action.y) then
+			msg.post("controller:/controller_object#controller", "load_proxy", {name = "upgrade"})
+		
+		elseif gui.pick_node(gui.get_node("leaderboard"), action.x, action.y) then
+			msg.post("controller:/controller_object#controller", "load_proxy", {name = "leaderboard"})
+
+		elseif gui.pick_node(gui.get_node("play"), action.x, action.y) then
+			msg.post("controller:/controller_object#controller", "load_proxy", {name = "game"})
+
+		elseif gui.pick_node(gui.get_node("exit"), action.x, action.y) then
+			msg.post("controller:/controller_object#controller", "load_proxy", {name = "exit"})
+		end
+		-- Return buttons to inital state
+		gui.play_flipbook(gui.get_node("play"), "released")
+		--gui.play_flipbook(gui.get_node("upgrade"), "released")
+		gui.play_flipbook(gui.get_node("leaderboard"), "released")
+		gui.play_flipbook(gui.get_node("exit"), "released")
+		
 	end
 end
 

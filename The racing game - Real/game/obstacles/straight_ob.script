@@ -1,28 +1,45 @@
-go.property("speed", 300) --create speed property
-go.property("bg", true)
+--Create speed property
+go.property("speed", 0)
+go.property("bg", false)
 
 function init(self)
+	--print("in script",url)
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
 end
 
 function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
 end
 
 function update(self, dt)
-	-- Get, modify and update segment pos
+	--Move and update position using speed property
 	pos = go.get_position()
-	pos.y = pos.y - self.speed * dt 
-	go.set_position(pos)
+	pos.y = pos.y - self.speed * dt
 
-	--When the segment is off screen
-	if pos.y <= -640 then
+	--If off screen
+	if pos.y <= -100 then 
 		go.delete()
-		msg.post("/map_gen#segment_factory", "bottom") --Send message to the factory script
 	end
+	
+	go.set_position(pos)
+end
+
+-- timer.delay requires function for callback parameter.
+function delete()
+	go.delete()
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") then
-		--go.delete(message.other_id)
+		-- Same speed as background there appears to stop
+		self.speed = 300
+		-- Play explosion then wait enough time for explosion to show then delete
+		sprite.play_flipbook(msg.url(nil,nil,"sprite"), "explosion_wreck")
+		timer.delay(0.25, false, delete)
 	end
 end
 

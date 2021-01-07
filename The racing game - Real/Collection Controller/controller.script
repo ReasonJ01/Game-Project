@@ -1,11 +1,16 @@
+require "modules.save_load"
+
 function init(self)
+	init_player_data(true)
+	init_score_data(false, nil, true)
+
+
+	
 	--When game is opened load the main menu screen
+	local current_proxy = "/controller_object#main_menu_proxy"
 	msg.post(".", "load_proxy", {name = "mainmenu"})
 	msg.post(".", "acquire_input_focus")
-	local current_proxy = "/controller_object#main_menu_proxy"
-	fact = 1
-
-	elapsed = 0
+	--local current_proxy = "/controller_object#main_menu_proxy"
 end
 
 function final(self)
@@ -15,12 +20,6 @@ function final(self)
 end
 
 function update(self, dt)
-	elapsed = elapsed + dt 
-	if elapsed > 5 and fact < 2 then
-		fact = fact * 1.1
-		--msg.post("/controller_object#game_proxy", "set_time_step", {factor = fact, mode = 0})
-		elapsed = 0
-	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -50,7 +49,7 @@ function on_message(self, message_id, message, sender)
 		
 	
 		--Unloading the current proxy
-	elseif message_id == hash("unload_proxy") then
+	elseif message_id == hash("unload_proxy") and current_proxy then
 		msg.post(current_proxy, "disable")
 		msg.post(current_proxy, "final")
 		msg.post(current_proxy, "unload")

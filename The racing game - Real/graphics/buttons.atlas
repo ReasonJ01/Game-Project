@@ -368,6 +368,58 @@ animations {
   flip_horizontal: 0
   flip_vertical: 0
 }
+animations {
+  id: "released"
+  images {
+    image: "/graphics/UI/PNG/buttonLong_brown.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "square_grey_clicked"
+  images {
+    image: "/graphics/UI/PNG/buttonSquare_grey_pressed.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/graphics/UI/PNG/buttonSquare_grey.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "square_grey "
+  images {
+    image: "/graphics/UI/PNG/buttonSquare_grey.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "bar_clicked"
+  images {
+    image: "/graphics/UI/PNG/buttonLong_brown_pressed.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/graphics/UI/PNG/buttonLong_brown.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
 margin: 0
 extrude_borders: 2
 inner_padding: 0

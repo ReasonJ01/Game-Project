@@ -1,11 +1,63 @@
+require "modules.save_load"
+
+function update_shop()
+	-- Set text to current value
+	gui.set_text(gui.get_node("current_strafe"), player_data["strafe_speed"])
+	-- Apply upgrade
+	gui.set_text(gui.get_node("upgraded_strafe"), player_data["strafe_speed"] + 50)
+	-- Increase price
+	strafe_price = (player_data["strafe_speed"] / 50) * 200
+	gui.set_text(gui.get_node("strafe_price"), strafe_price)
+
+	-- check for sufficient funds, if not then show a cross, else show a tick
+	if player_data["currency"] < strafe_price then
+		gui.play_flipbook(gui.get_node("strafe_tick"), "iconCross_blue")
+	else
+		gui.play_flipbook(gui.get_node("strafe_tick"), "iconCheck_beige")
+	end
+
+	
+	gui.set_text(gui.get_node("current_ram"), player_data["ram_durability"])
+	gui.set_text(gui.get_node("upgraded_ram"), player_data["ram_durability"] + 1)
+	
+	ram_price = player_data["ram_durability"] * 5000
+	gui.set_text(gui.get_node("ram_price"), ram_price)
+	
+	if player_data["currency"] < ram_price then
+		gui.play_flipbook(gui.get_node("ram_tick"), "iconCross_blue")
+	else
+		gui.play_flipbook(gui.get_node("ram_tick"), "iconCheck_beige")
+	end
+
+	
+	gui.set_text(gui.get_node("current_mult"), player_data["score_mult"])
+	gui.set_text(gui.get_node("upgraded_mult"), player_data["score_mult"] + 0.01)
+	
+	mult_price = math.floor(100 ^  2 * player_data["score_mult"]) 
+	gui.set_text(gui.get_node("mult_price"), mult_price)
+	
+	if player_data["currency"] < mult_price then
+		gui.play_flipbook(gui.get_node("mult_tick"), "iconCross_blue")
+	else
+		gui.play_flipbook(gui.get_node("mult_tick"), "iconCheck_beige")
+	end
+
+	
+	gui.set_text(gui.get_node("currency"), player_data["currency"])
+
+end
+
 function init(self)
+	-- Load in player data
+	player_data = load("player_data", nil, true)
+	-- Set the shop values
+	update_shop()	
 	msg.post(".", "acquire_input_focus")
+
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	save("player_data", player_data, true)
 end
 
 function update(self, dt)
@@ -15,27 +67,48 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
 end
 
-function on_input(self, action_id, action)
-	--Check if back button clicked
+function button_clicked(self, node)
+	if node == gui.get_node("back_box") then
+		msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
+		
+	elseif node == gui.get_node("buy_strafe") and player_data["currency"] >= strafe_price then
+		player_data["currency"] = player_data["currency"] - strafe_price
+		player_data["strafe_speed"] = player_data["strafe_speed"] + 50
+		update_shop()
+		
+	elseif node == gui.get_node("buy_ram") and player_data["currency"] >= ram_price then
+		player_data["currency"] = player_data["currency"] - ram_price
+		player_data["ram_durability"] = player_data["ram_durability"] + 1
+		update_shop()
 
-	if action_id == hash("touch") then
-		
-		if gui.pick_node(gui.get_node("back_box"), action.x, action.y) then
-			gui.play_flipbook(gui.get_node("back_box"), "clicked") --Change button state to clicked
-		end
+	elseif node == gui.get_node("buy_mult") and player_data["currency"] >= mult_price then
+		player_data["currency"] = player_data["currency"] - mult_price
+		player_data["score_mult"] = player_data["score_mult"] + 0.01
+		print("gg")
+		update_shop()
 	end
-	
-	--When button released load new proxy
+end
+
+
+function on_input(self, action_id, action)
+	-- if button clicked
 	if action_id == hash("touch") and action.released then
-		
-		--if the "touch" action happens within the bounds of the "back box". 
+		--if back button clicked
 		if gui.pick_node(gui.get_node("back_box"), action.x, action.y) then
-			msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
+			--play a click animation then call button_clicked()
+			gui.play_flipbook(gui.get_node("back_box"), "bar_clicked", button_clicked) --Change button state to clicked
+
+		elseif gui.pick_node(gui.get_node("buy_strafe"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("buy_strafe"), "square_grey_clicked", button_clicked)
+
+		elseif gui.pick_node(gui.get_node("buy_ram"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("buy_ram"), "square_grey_clicked", button_clicked)
+			
+		elseif gui.pick_node(gui.get_node("buy_mult"), action.x, action.y) then
+			gui.play_flipbook(gui.get_node("buy_mult"), "square_grey_clicked", button_clicked)
+			
 		end
 	end
 end

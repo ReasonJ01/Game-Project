@@ -1,31 +1,42 @@
--- Loads the specified player attribute from the save file where index is a string and represents 
--- the name of the table index where the specific attribute is stored
-function load(index)
-	-- gets the path to an appropriate save path for the system. format is (folder_name, file_name)
-	local save_path = sys.get_save_file("Boat_Racer", "save_file")
-	-- Returns a table of values.
-	loaded_table = sys.load(save_path)
-	return loaded_table[index]
+-- For save and load functions
+require "modules.save_load"
+
+--Create ignore property, set to false
+go.property("ignore_collisions", false)
+
+function increase_score()
+	score = score + 1
+	print(score)
 end
 
 function init(self)
-	-- loads the players strafe_speed from the save file
-	strafe_speed = load("strafe_speed")
+	--Initialise variables
+	player_data = load("player_data",nil, true)
+	strafe_speed = player_data["strafe_speed"]
+	ram_durability = player_data["ram_durability"]
+	multiplier = player_data["score_mult"]
+	
 	msg.post(".", "acquire_input_focus")
+	
 	self.base_speed= 100
 	self.speed = 0
-	self.acceleration = 50
+	score = 1
+	
 	-- Used to define movement bounds in update
 	width, height = window.get_size()
+	
+	--Start particlefx
+	particlefx.play("/player#water")
+
+	timer.delay(15, true, increase_score)
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	msg.post("controller:/controller_object#game_proxy", "set_time_step", {factor = 1, mode = 1})
 end
 
 function update(self, dt)
+	-- Get position and modify based on input, set new position
 	pos = go.get_position()
 	--dt is time delta between frames
 	pos.x = pos.x +  self.speed * dt
@@ -37,11 +48,15 @@ function update(self, dt)
 	
 	go.set_position(pos)
 	self.speed = 0
+	msg.post("/gui#game", "increase_score", {value = score * multiplier})
 end
 
 function collision(self)
 	-- "Pauses" the game
 	msg.post("controller:/controller_object#game_proxy", "set_time_step", {factor = 0, mode = 1})
+	-- stop score from increasing
+	multiplier = 0
+	score = 1
 	-- Set player sprite back to ship
 	sprite.play_flipbook("/player#sprite", "ship")
 	-- move player to middle of screen
@@ -49,18 +64,48 @@ function collision(self)
 	pos.x = width/2
 	go.set_position(pos)
 	-- Show "play" button
-	msg.post("/gui#game", "show")
+	msg.post("/gui#game", "show_play")
+end
+
+function endInvincibility(self)
+	--Collisions no longer ignored, end glowing effect, set alpha to default
+	self.ignore_collisions = false
+	go.cancel_animations("player#sprite", "tint.w")
+	go.set("player#sprite", "tint.w", 1)
 end
 
 function on_message(self, message_id, message, sender)
-	-- collision_response is sent after any collision
-	if message_id == hash("collision_response") then
-		-- Play explosion animation then call collision()
-		sprite.play_flipbook("/player#sprite", "explosion", collision)
+	-- collision_response is sent after any collision, only acknowledge if not ignoring collisions
+	if message_id == hash("collision_response") and not self.ignore_collisions then
+		-- If collision is with tip of ship and there is still ram durability then 
+		if sender == msg.url(nil, "player", "ship_tip_collision") and ram_durability > 0 then
+			-- Ignore collisions
+			self.ignore_collisions = true
+			-- Glowing effect
+			go.animate("/player#sprite", "tint.w", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INSINE, 1.5)
+			-- Reduce ram_durability
+			ram_durability = ram_durability - 1
+			-- Just long enough for the first collision
+			timer.delay(0.4, false, endInvincibility)
+		else
+			--Ignore collisions
+			self.ignore_collisions = true
+			-- Message obstacle factory to delete all obstacles
+			particlefx.stop("/player#water")
+			-- Play explosion animation then call collision()
+			sprite.play_flipbook("/player#sprite", "explosion", collision)
+		end
 		
 	elseif message_id == hash("unpause") then
+		go.animate("/player#sprite", "tint.w", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INSINE, 1.5)
+		-- Restart particle fx
+		particlefx.play("/player#water")
 		-- Unpause the game
 		msg.post("controller:/controller_object#game_proxy", "set_time_step", {factor = 1, mode = 1})
+		-- Resume score increase
+		multiplier = player_data["score_mult"]
+		-- begin invincibility timer
+		timer.delay(5, false, endInvincibility)
 	end
 end
 

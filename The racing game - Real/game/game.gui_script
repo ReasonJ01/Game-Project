@@ -1,3 +1,5 @@
+require "modules.save_load"
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	-- Disable play button, exit button, game over scrren
@@ -6,31 +8,36 @@ function init(self)
 	gui.set_enabled(gui.get_node("gameover"), false)
 	--Initial lives
 	lives = 3
+	-- save score node as it will be used frequently
+	score_node = gui.get_node("score")
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	-- Save currency to player_data
+	save("player_data", {currency = tonumber(gui.get_text(gui.get_node("currency")))}, true)
+	scores = load("score_data",nil,false)
+	scores["11"] = tonumber(gui.get_text(score_node))
+	save("score_data", scores, true)
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("show") then
+	if message_id == hash("show_play") then
 		-- If player out of lives then show game over screen and exit button, else show play button
 		if lives <= 0 then 
 			gui.set_enabled(gui.get_node("gameover"), true)
 			-- Sets game over score value to the players score
 			gui.set_text(gui.get_node("go_score"), gui.get_text(gui.get_node("score")))
+			gui.set_text(gui.get_node("currency"), math.floor(gui.get_text(gui.get_node("score")) / 100))
 			gui.set_enabled(gui.get_node("exit"), true)
 		else 
 			gui.set_enabled(gui.get_node("play"), true)
 		end
+	elseif message_id == hash("increase_score") then
+		gui.set_text(score_node, gui.get_text(score_node) + message.value)
 	end
 end
 
@@ -64,6 +71,8 @@ function on_input(self, action_id, action)
 			-- Load main menu
 			msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
 		end
+		gui.play_flipbook(gui.get_node("play"), "released")
+		--gui.play_flipbook(gui.get_node("exit"), "released")
 	end
 end
 

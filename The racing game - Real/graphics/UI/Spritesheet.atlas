@@ -94,6 +94,10 @@ images {
   image: "/graphics/UI/PNG/Default size/Ships/ship (24).png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/cannonBall.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "explosion"
   images {
@@ -121,6 +125,29 @@ animations {
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "explosion_wreck"
+  images {
+    image: "/graphics/UI/PNG/Default size/Effects/explosion1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/graphics/UI/PNG/Default size/Effects/explosion2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/graphics/UI/PNG/Default size/Effects/explosion3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/graphics/UI/PNG/Default size/Ships/ship (21).png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 5
   flip_horizontal: 0
   flip_vertical: 0
 }
