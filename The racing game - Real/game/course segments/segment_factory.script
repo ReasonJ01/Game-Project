@@ -2,7 +2,7 @@ function init(self)
 	--Create blank segment for easy start. Spawned 
 	factory.create("/map_gen#segment3_fact",vmath.vector3(0,640,0))
 	elapsed = 0
-	segments = {}
+	width, height = window.get_size()
 	
 end
 
@@ -22,30 +22,53 @@ end
 function spawn_rand_segment(chance, thresholds, pos)
 	--set default params
 	chance = chance or math.random(1,100)
-	thresholds = thresholds or {25,50,100}
+	thresholds = thresholds or {25,50,60,100}
 	pos = pos or {0,640,0}
+	
 
 	if chance <= thresholds[1] then
-		local id = factory.create("/map_gen#segment1_fact", vmath.vector3(pos[1], pos[2], pos[3]), nil,{speed = 300})
+		-- Calculate an x offset to vary the map 
+		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
+		x = pos[1] + (math.random(-12,15) * 64)
+		
+		local id = factory.create("/map_gen#segment1_fact", vmath.vector3(x, pos[2], pos[3]), nil,{speed = 300})
 		--table.insert(segments, msg.url("game",id, "segment_script"))
 		--print(id, "added")
+		--print("spawn 1")
 
 	elseif chance <= thresholds[2] then 
-		local id = factory.create("/map_gen#segment2_fact", vmath.vector3(pos[1], pos[2], pos[3]), nil, {speed = 300})
+		-- Calculate an x offset to vary the map 
+		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
+		x = pos[1] + (math.random(-7,11) * 64)
+		
+		local id = factory.create("/map_gen#segment2_fact", vmath.vector3(x, pos[2], pos[3]), nil, {speed = 300})
 		--table.insert(segments, msg.url("game",id, "segment_script"))
 		--print(msg.url("game",id, "segment_script"), "added")
+		--print("spawn 2")
 
 	elseif chance <= thresholds[3] then
 		local id = factory.create("/map_gen#segment3_fact", vmath.vector3(pos[1], pos[2], pos[3]), nil,{speed = 300})
 		--table.insert(segments, msg.url("game",id, "segment_script"))
 		--print(id, "added")
+		--print("spawn 3")
+
+	elseif chance <= thresholds[4] then
+		-- Calculate an x offset to vary the map 
+		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
+		x = pos[1] + (math.random(-4,9) * 64)
+		--print("offset", x)
+		
+		local id = factory.create("/map_gen#segment4_fact", vmath.vector3(x, pos[2], pos[3]), nil,{speed = 300})
+		--table.insert(segments, msg.url("game",id, "segment_script"))
+		--print(id, "added")
+		--print("spawn 4")
 	end
 end
 
 function on_message(self, message_id, message, sender)
 
 	if message_id == hash("bottom") then
-		spawn_rand_segment(nil, {25, 50, 100})
+		spawn_rand_segment(nil, nil)
 	end
 end
 

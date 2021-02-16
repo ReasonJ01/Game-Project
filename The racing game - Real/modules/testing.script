@@ -8,6 +8,7 @@ end
 
 
 function init(self)
+	--save("player_data", {currency = 1000, strafe_speed = 100}, false)
 end
 function update(self, dt)
 	-- Add update code here

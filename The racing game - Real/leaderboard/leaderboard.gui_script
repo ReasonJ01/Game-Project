@@ -2,7 +2,7 @@ require "modules.save_load"
 
 
 --Sort the list of scores high -low
-function sort()
+function _sort()
 	--for every position in the list
 	for j=1,11 do
 		--Compare the value of each position to the one before it
@@ -34,7 +34,7 @@ end
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	scores = load("score_data", nil, true)
-	sort()
+	--sort(scores)
 	update_list()
 	
 end

@@ -4,9 +4,10 @@ function update_shop()
 	-- Set text to current value
 	gui.set_text(gui.get_node("current_strafe"), player_data["strafe_speed"])
 	-- Apply upgrade
-	gui.set_text(gui.get_node("upgraded_strafe"), player_data["strafe_speed"] + 50)
+	gui.set_text(gui.get_node("upgraded_strafe"), player_data["strafe_speed"] + 10)
 	-- Increase price
-	strafe_price = (player_data["strafe_speed"] / 50) * 200
+	-- each 10 point increase costs an additional 40 currency 
+	strafe_price = ((player_data["strafe_speed"] / 10 ) * 40 ) - 200
 	gui.set_text(gui.get_node("strafe_price"), strafe_price)
 
 	-- check for sufficient funds, if not then show a cross, else show a tick
@@ -75,7 +76,7 @@ function button_clicked(self, node)
 		
 	elseif node == gui.get_node("buy_strafe") and player_data["currency"] >= strafe_price then
 		player_data["currency"] = player_data["currency"] - strafe_price
-		player_data["strafe_speed"] = player_data["strafe_speed"] + 50
+		player_data["strafe_speed"] = player_data["strafe_speed"] + 10
 		update_shop()
 		
 	elseif node == gui.get_node("buy_ram") and player_data["currency"] >= ram_price then

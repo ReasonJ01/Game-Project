@@ -1,6 +1,8 @@
 require "modules.save_load"
 
 function init(self)
+	scores = load("score_data", nil, false)
+	sort(scores)
 	msg.post(".", "acquire_input_focus")
 	-- Disable play button, exit button, game over scrren
 	gui.set_enabled(gui.get_node("play"), false)
@@ -10,18 +12,32 @@ function init(self)
 	lives = 3
 	-- save score node as it will be used frequently
 	score_node = gui.get_node("score")
+	ram_durability = 0
+
+	-- Set highscore
+	gui.set_text(gui.get_node("highscore"), scores["1"])
 end
 
 function final(self)
 	-- Save currency to player_data
-	save("player_data", {currency = tonumber(gui.get_text(gui.get_node("currency")))}, true)
-	scores = load("score_data",nil,false)
+	currency = load("player_data", "currency", false)
+	save("player_data", {currency = currency + tonumber(gui.get_text(gui.get_node("currency")))}, true)
 	scores["11"] = tonumber(gui.get_text(score_node))
 	save("score_data", scores, true)
 end
 
 function update(self, dt)
 	
+end
+
+function unpause()
+	msg.post("/player#player", "unpause")
+	-- Get the current life icon	
+	current_life = "live" .. lives
+	-- Hide current life icon
+	gui.set_enabled(gui.get_node(current_life),false)
+	-- Update lives
+	lives = lives - 1
 end
 
 function on_message(self, message_id, message, sender)
@@ -31,31 +47,37 @@ function on_message(self, message_id, message, sender)
 			gui.set_enabled(gui.get_node("gameover"), true)
 			-- Sets game over score value to the players score
 			gui.set_text(gui.get_node("go_score"), gui.get_text(gui.get_node("score")))
-			gui.set_text(gui.get_node("currency"), math.floor(gui.get_text(gui.get_node("score")) / 100))
+			gui.set_text(gui.get_node("go_highscore"), scores["1"])
+			gui.set_text(gui.get_node("currency"), math.floor(gui.get_text(gui.get_node("score")) / 50))
 			gui.set_enabled(gui.get_node("exit"), true)
 		else 
 			gui.set_enabled(gui.get_node("play"), true)
 		end
+		--Recieved from player.script: line 51
 	elseif message_id == hash("increase_score") then
 		gui.set_text(score_node, gui.get_text(score_node) + message.value)
+
+	elseif message_id == hash("set_ram") then
+		ram_durability = (message.durability or ram_durability) + (message.addition or 0)
+		gui.set_text(gui.get_node("ram_durability"), ram_durability)
 	end
 end
 
 function on_input(self, action_id, action)
-	if action_id == hash("touch") then
+	if action_id == hash("space") then
 		--Change button state to clicked
-		if gui.pick_node(gui.get_node("play"), action.x, action.y) then
+		if lives > 0 then
 			gui.play_flipbook(gui.get_node("play"), "clicked")
 			
-		elseif gui.pick_node(gui.get_node("exit"), action.x, action.y) then
+		else
 			gui.play_flipbook(gui.get_node("exit"), "clicked")
 		end
 	end
 
 	--When button released load
-	if action_id == hash("touch") and action.released then
+	if action_id == hash("space") and action.released and (gui.is_enabled(gui.get_node("play")) or gui.is_enabled(gui.get_node("exit"))) then
 			-- If play clicked and player has lives
-		if gui.pick_node(gui.get_node("play"), action.x, action.y) and lives > 0 then
+		if lives > 0 then
 			-- Hide play button
 			gui.set_enabled(gui.get_node("play"), false)
 			-- Unpause game
@@ -67,12 +89,12 @@ function on_input(self, action_id, action)
 			-- Update lives
 			lives = lives - 1
 			
-		elseif  gui.pick_node(gui.get_node("exit"), action.x, action.y) then
+		else
 			-- Load main menu
 			msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
 		end
 		gui.play_flipbook(gui.get_node("play"), "released")
-		--gui.play_flipbook(gui.get_node("exit"), "released")
+		gui.play_flipbook(gui.get_node("exit"), "released")
 	end
 end
 

@@ -893,9 +893,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Faster\n"
-  "strafing\n"
-  "speed\n"
+  text: "Faster strafing speed\n"
   ""
   font: "system_font"
   id: "desc1_txt"
@@ -915,7 +913,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  line_break: true
   parent: "desc1"
   layer: ""
   inherit_alpha: true
@@ -1715,10 +1713,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Battering ram\n"
-  "to destroy\n"
-  "incoming\n"
-  "obstacles"
+  text: "Battering ram to destroy incoming obstacles"
   font: "system_font"
   id: "desc2_txt"
   xanchor: XANCHOR_NONE
@@ -1737,7 +1732,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  line_break: true
   parent: "desc2"
   layer: ""
   inherit_alpha: true
@@ -2537,9 +2532,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Score Multiplier.\n"
-  "Get highscores \n"
-  "faster"
+  text: "Score multiplier to get higher scores"
   font: "system_font"
   id: "desc3_txt"
   xanchor: XANCHOR_NONE
@@ -2558,7 +2551,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  line_break: true
   parent: "desc3"
   layer: ""
   inherit_alpha: true

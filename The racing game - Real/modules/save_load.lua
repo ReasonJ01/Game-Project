@@ -90,22 +90,31 @@ end
 
 -- This will check to see if a player_data file exists, if not a new one is created. Takes boolean for extra info printed to console.
 function init_player_data(verbose)
+	-- Skip use of io
+	if sys.get_sys_info()["system_name"] == "HTML5" then
+		skip_io = true
+	end
 	-- Find where save file should be
 	local file_path = sys.get_save_file("Boat_Racer","player_data")
-	-- Try to open the save file in read mode
-	exists = io.open(file_path, "r")
-	-- io.read returns nil if the file can't be found
-	if exists then
-		-- If the file exists then close it and no further action is needed
-		io.close(exists)
-		if verbose then
-			print("player_data found at", file_path)
+	-- Can't use io in html5.
+	if not skip_io then
+		--Try to open the save file in read mode. 
+		exists = io.open(file_path, "r")
+		-- io.read returns nil if the file can't be found
+		if exists and not skip then
+			-- If the file exists then close it and no further action is needed
+			io.close(exists)
+			if verbose then
+				print("player_data found at", file_path)
+			end
+		else
+			if verbose then
+				print("player_data not found at", file_path, "creating player_data \n")
+			end
+			-- Create a player_data file with starting values
+			save("player_data", {strafe_speed = 50, ram_durability = 0, score_mult = 1, currency = 0}, verbose or false)
 		end
 	else
-		if verbose then
-			print("player_data not found at", file_path, "creating player_data \n")
-		end
-		-- Create a player_data file with starting values
 		save("player_data", {strafe_speed = 50, ram_durability = 0, score_mult = 1, currency = 0}, verbose or false)
 	end
 end
@@ -113,6 +122,10 @@ end
 -- Will create either a zerod table or a table of random ints 1-1000. Tables have 10 elements. Takes 3 bools.
 -- rand will create the random table, verbose will print extra info.Overwrite will overwrite existing score_data.
 function init_score_data(overwrite, rand,verbose)
+	-- Skip use of io
+	if sys.get_sys_info()["system_name"] == "HTML5" then
+		skip_io = true
+	end
 	overwrite = overwrite or false
 	rand = rand or false
 	verbose = verbose or false
@@ -120,22 +133,33 @@ function init_score_data(overwrite, rand,verbose)
 
 	-- Find where save file should be
 	local file_path = sys.get_save_file("Boat_Racer","score_data")
-	-- Try to open the save file in read mode
-	exists = io.open(file_path, "r")
-	-- io.read returns nil if the file can't be found
-	if exists and not overwrite then
-		-- If the file exists then close it and no further action is needed
-		io.close(exists)
-		if verbose then
-			print("score_data found at", file_path)
+	if not skip_io then
+		-- Try to open the save file in read mode
+			exists = io.open(file_path, "r")
+		-- io.read returns nil if the file can't be found
+		if exists and not overwrite then
+			-- If the file exists then close it and no further action is needed
+			io.close(exists)
+			if verbose then
+				print("score_data found at", file_path)
+			end
+		else
+			-- File needs to be closed if being overwritten
+			io.close(exists)
+			if verbose then
+				print("creating score_data at ", file_path)
+			end
+			-- Create a player_data file with starting values
+			for i=1, 11 do
+				if rand then
+					scores[i] = math.random(1, 1000)
+				else
+					scores[i] = 0
+				end
+			end
+			save("score_data", scores, verbose)
 		end
 	else
-		-- File needs to be closed if being overwritten
-		io.close(exists)
-		if verbose then
-			print("creating score_data at ", file_path)
-		end
-		-- Create a player_data file with starting values
 		for i=1, 11 do
 			if rand then
 				scores[i] = math.random(1, 1000)
@@ -147,3 +171,22 @@ function init_score_data(overwrite, rand,verbose)
 	end
 end
 
+-- Scores should be a table of length 11
+--Sort the list of scores high -low
+function sort(scores)
+	--for every position in the list
+	for j=1,11 do
+		--Compare the value of each position to the one before it
+		for i=2,11 do
+
+			a = scores[tostring(i-1)]
+			b = scores[tostring(i)]
+
+			--Set the earlier position i.e. the position of the bigger number to the biggest of the two values
+			scores[tostring(i-1)] = math.max(a,b)
+			--Set the later, i.e. the position of the lower number to the smaller of the two values
+			scores[tostring(i)] = math.min(a,b)
+			--pprint(scores)
+		end
+	end
+end

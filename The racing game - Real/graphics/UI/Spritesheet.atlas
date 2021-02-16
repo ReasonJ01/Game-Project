@@ -98,6 +98,46 @@ images {
   image: "/graphics/UI/PNG/Default size/Ship parts/cannonBall.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/hullLarge (1).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/hullLarge (2).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/hullLarge (3).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/hullLarge (4).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (1).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (2).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (3).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (4).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (5).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/graphics/UI/PNG/Default size/Ship parts/crew (6).png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "explosion"
   images {

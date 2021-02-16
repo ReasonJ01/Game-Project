@@ -1,21 +1,25 @@
+
+
 function create()
-	spawn_chance = math.random(1,100)
-	if spawn_chance <= 25 then
-	elseif spawn_chance <= 50 then
-		factory.create("/obstacle_gen#swerv_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = 600}, 1)
-	elseif spawn_chance <= 85 then
-		factory.create("/obstacle_gen#straight_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = speed * math.random(0.9, 1.1)}, 0.8)
-	elseif spawn_chance <= 100 then
-		factory.create("/obstacle_gen#hostile_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = 400}, 0.8)
-	end
+		spawn_chance = math.random(1,100)
+		if spawn_chance <= 10 then
+		elseif spawn_chance <= 45 then
+			factory.create("/obstacle_gen#swerv_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = speed}, 1)
+		elseif spawn_chance <= 46 then
+			factory.create("/obstacle_gen#sailor_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = 300}, 1)
+		elseif spawn_chance <= 97 then
+			factory.create("/obstacle_gen#straight_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = speed * math.random(0.9, 1.1)}, 0.8)
+		elseif spawn_chance <= 100 then
+			factory.create("/obstacle_gen#hostile_fact",vmath.vector3(math.random(50,width), 1000, 0.5), nil, {speed = 400}, 0.8)
+		end
 end
 
 function init(self)
-	spawn_rate = 1
+	spawn_rate = 4
 	width, height = window.get_size()
-	timer_ = timer.delay(spawn_rate, true,create)
 	speed = 400
 	elapsed = 0
+	
 end
 
 function final(self)
@@ -24,18 +28,43 @@ function final(self)
 	-- Remove this function if not needed
 end
 
+
 function update(self, dt)
-	elapsed = elapsed + dt 
-	if elapsed >= 5   then
+	-- Sound processing from https://defold.com/manuals/sound/
+	for i, group_hash in ipairs(sound.get_groups()) do
+		local left_rms, right_rms = sound.get_rms(group_hash, 2048 / 65536.0)
+		if right_rms == 0 then
+			elapsed = elapsed - dt
+			if elapsed <= 0 and spawn_rate < 10 then
+				spawn_rate = spawn_rate + 0.01
+				elapsed = 1/spawn_rate
+				create()
+				if speed <= 800 then
+					speed = speed + 2
+				end
+			elseif spawn_rate >= 10 then
+				spawn_rate = 5
+			end
+		-- Spawn enemies at certain parts during the song
+		elseif right_rms >= 0.28 then
+			speed = 700
+			create()
+		end
+	end
+end
+
+
+function _update(self, dt)
+	elapsed = elapsed - dt
+	if elapsed <= 0 and spawn_rate < 10 then
+		spawn_rate = spawn_rate + 0.01
+		elapsed = 1/spawn_rate
+		create()
 		if speed <= 800 then
-			speed = speed * 1.05
-			elapsed = 0
+			speed = speed + 2
 		end
-		if spawn_rate >= 1/10 then
-			spawn_rate = spawn_rate * 0.90
-			timer.cancel(timer_)
-			timer_ = timer.delay(spawn_rate, true,create)
-		end
+	elseif spawn_rate >= 10 then
+		spawn_rate = 5
 	end
 end
 

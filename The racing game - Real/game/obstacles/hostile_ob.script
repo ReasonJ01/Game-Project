@@ -2,23 +2,21 @@
 go.property("speed", 0)
 go.property("bg", false)
 
-
-function follow()
-	go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, go.get_position("player").x, go.EASING_LINEAR, 2)
-	--go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, -100,go.EASING_LINEAR, 2)
-end
-
 function init(self)
+
+	width, height = window.get_size()
+
+	-- Initialise cpsts for pathfinding
+	west = 0
+	east = 0
 	-- Construct url to sprite
 	url = msg.url()
 	url.fragment = "sprite"
-	--create follow update timer
-	timer.delay(0.1, true, follow)
 	--Begin moving the obstacle
-	go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, go.get_position("player").x, go.EASING_LINEAR, 2)
 	-- Make the obstacle flash red
 	go.animate(url, "tint.x", go.PLAYBACK_LOOP_PINGPONG, 3, go.EASING_INSINE, 1.5)
 end
+
 
 function final(self)
 	-- Add finalization code here
@@ -28,8 +26,70 @@ end
 
 function update(self, dt)
 	pos = go.get_position()
-	pos.y = pos.y - self.speed * dt
+	-- This calculates a y coordinate for a given x coordinate to make a semi circle, of radius 400, of points spaced 50 apart.
+	-- The semi circle is centred on the player. They will be used as an end-point for the raycasting
+	for i = pos.x - 400, pos.x + 400, 50 do
+
+		y = (i-pos.x)^2
+		-- This num is the radius squared
+		y = 160000 - (y)
+		y = math.sqrt(y)
+		y = pos.y - y	
+
+		-- Store the point as a vector
+		point = vmath.vector3(i, y, pos.z)
+
+		-- Raycasting returns information on nay collisions 
+		-- Ray starts at player pos, ends at the calc'ed point. Only collides with the player and the edges of the screen
+		result = physics.raycast(pos, point, { hash("player"), hash("bounds") }, false)
+		-- If there is a collision 
+		if result then
+			-- If the collision is west of the obstacle
+			if result.position.x <= pos.x then
+				-- And the obstacle is the player
+				if result.group == hash("player") then
+					-- Increase the cost of moving east proportional to how close the player is.
+					-- 1/fraction makes closer objects have a much higher cost.
+					east = east + (1/result.fraction)
+				else
+					-- Increase the cost of moving west,
+					west = west + (1/result.fraction)
+				end
+			else
+				-- If the obstacle on the east is the player
+				if result.group == hash("player") then
+					-- Increase the cost of moving west
+					west = west + (1/result.fraction)
+				else
+					-- Increase the cost of moving east
+					east = east + (1/result.fraction)
+				end
+			end
+		end
+	end
+
+	-- Choose to move to the side with the lowest cost
+	if east < west then
+		-- Speed is proportional to the cost of moving in the opposite direction. Limited to a max of 200 to prevent extreme values
+		self.speed = math.min(150 * (west/10), 200)
+	elseif east > west then
+		self.speed = math.max(-150 *(east/10), -200)
+	else
+		self.speed = 0
+	end
+	
+	-- Move horizontally
+	pos.x = pos.x + self.speed * dt	
+	-- Move vertically
+	pos.y = pos.y -350 * dt
+	-- Set new pos
 	go.set_position(pos)
+	
+	-- Zero costs and speed
+	self.speed = 0
+	west = 0
+	east = 0
+	
 	--If off screen
 	if pos.y <= -100 then 
 		go.delete()
