@@ -34,7 +34,7 @@ end
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	scores = load("score_data", nil, true)
-	--sort(scores)
+	sort(scores)
 	update_list()
 	
 end
