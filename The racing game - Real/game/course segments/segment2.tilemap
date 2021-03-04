@@ -3803,13 +3803,6 @@ layers {
   cell {
     x: 13
     y: 6
-    tile: 15
-    h_flip: 0
-    v_flip: 0
-  }
-  cell {
-    x: 14
-    y: 6
     tile: 61
     h_flip: 0
     v_flip: 0

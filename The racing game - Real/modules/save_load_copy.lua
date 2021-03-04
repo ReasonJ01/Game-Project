@@ -8,19 +8,15 @@
 function save(save_file, data, verbose)
 	-- set defaults
 	verbose = verbose or false
-	
 	-- Check if data provided and that data is a table.
 	if data and type(data) == "table" then
-		
 		-- Get the file_path to the save file
 		file_path = sys.get_save_file("Boat_Racer",save_file)
 		-- load saved data and add new data to it in order to prevent old data from being overwritten.
 		loaded_table = sys.load(file_path)
-		
 		for k, v in pairs(data) do
 			loaded_table[tostring(k)] = v
 		end
-		
 		-- Save data
 		sys.save(file_path, loaded_table)
 	else 
@@ -41,7 +37,7 @@ end
 
 
 --loads data from specified file and returns specified value if key given otherwise it returns the full table
--- Save_file should be a string, is the file to load data from.
+-- Save_file should be a string, is the file to load data from, default is "save_file"
 -- key is the key for a corresponding value in the table.
 -- verbose is a boolean, whether or not to include loading info, false by default.
 function load(save_file, key, verbose)
@@ -75,7 +71,6 @@ function removeData(save_file, key, verbose)
 	-- load data from specific file into a table
 	local file_path = sys.get_save_file("Boat_Racer",save_file)
 	local loaded_table = sys.load(file_path)
-	
 	-- if a key given then delete the associated value and overwrite the old table with the new one
 	if key then
 		if verbose then
@@ -94,25 +89,21 @@ function removeData(save_file, key, verbose)
 end
 
 -- This will check to see if a player_data file exists, if not a new one is created. Takes boolean for extra info printed to console.
-function init_player_data_(verbose)
-	-- Skip use of io for HTML5
+function init_player_data(verbose)
+	-- Skip use of io
 	if sys.get_sys_info()["system_name"] == "HTML5" then
 		skip_io = true
 	end
 	-- Find where save file should be
 	local file_path = sys.get_save_file("Boat_Racer","player_data")
-	
 	-- Can't use io in html5.
 	if not skip_io then
 		--Try to open the save file in read mode. 
 		exists = io.open(file_path, "r")
-		
 		-- io.read returns nil if the file can't be found
 		if exists and not skip then
-			
 			-- If the file exists then close it and no further action is needed
 			io.close(exists)
-			
 			if verbose then
 				print("player_data found at", file_path)
 			end
@@ -124,30 +115,13 @@ function init_player_data_(verbose)
 			save("player_data", {strafe_speed = 100, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
 		end
 	else
-		save("player_data", {strafe_speed = 100, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
+		save("player_data", {strafe_speed = 50, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
 	end
 end
-
---Used to either create/overwrite player_data.
--- takes 2 bools, verbose for extra infomation, overwrite to specify if an existing file should be overwritten
-function init_player_data(verbose, overwrite)
-	-- Try to load the strafe_speed, if it does not exist it returns nil.
-	if not load("player_data", "strafe_speed", false) or overwrite then
-
-		if verbose then
-			print("Player data not found/ being overwritten, creating file.")
-		end
-
-		-- Create new file with default values
-		save("player_data", {strafe_speed = 100, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
-	end
-end
-
-
 
 -- Will create either a zerod table or a table of random ints 1-1000. Tables have 10 elements. Takes 3 bools.
 -- rand will create the random table, verbose will print extra info.Overwrite will overwrite existing score_data.
-function init_score_data_(overwrite, rand,verbose)
+function init_score_data(overwrite, rand,verbose)
 	-- Skip use of io
 	if sys.get_sys_info()["system_name"] == "HTML5" then
 		skip_io = true
@@ -196,25 +170,6 @@ function init_score_data_(overwrite, rand,verbose)
 		save("score_data", scores, verbose)
 	end
 end
-
-
-function init_score_data(overwrite, rand,verbose)
-	scores = load("score_data")
-	if not scores[1] or overwrite then
-		if verbose then
-			print("Score data not found/ being overwritten, creating file.")
-		end
-		for i=1, 11 do
-			if rand then
-				table.insert(scores, math.random(1, 1000))
-			else
-				table.insert(scores, 0)
-			end
-		end
-		save("score_data", scores, verbose)
-	end
-end
-
 
 -- Scores should be a table of length 11
 --Sort the list of scores high -low

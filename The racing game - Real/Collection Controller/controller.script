@@ -1,7 +1,7 @@
 require "modules.save_load"
 
 function init(self)
-	init_player_data(true)
+	init_player_data(true, false)
 	init_score_data(false, nil, true)
 
 

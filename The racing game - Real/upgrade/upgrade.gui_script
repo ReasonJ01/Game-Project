@@ -21,7 +21,7 @@ function update_shop()
 	gui.set_text(gui.get_node("current_ram"), player_data["ram_durability"])
 	gui.set_text(gui.get_node("upgraded_ram"), player_data["ram_durability"] + 1)
 	
-	ram_price = player_data["ram_durability"] * 5000
+	ram_price = player_data["ram_durability"] * 1000
 	gui.set_text(gui.get_node("ram_price"), ram_price)
 	
 	if player_data["currency"] < ram_price then
@@ -34,7 +34,7 @@ function update_shop()
 	gui.set_text(gui.get_node("current_mult"), player_data["score_mult"])
 	gui.set_text(gui.get_node("upgraded_mult"), player_data["score_mult"] + 0.01)
 	
-	mult_price = math.floor(100 ^  2 * player_data["score_mult"]) 
+	mult_price = math.floor(50 ^  2 * player_data["score_mult"]) 
 	gui.set_text(gui.get_node("mult_price"), mult_price)
 	
 	if player_data["currency"] < mult_price then

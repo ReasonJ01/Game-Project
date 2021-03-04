@@ -60,6 +60,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("set_ram") then
 		ram_durability = (message.durability or ram_durability) + (message.addition or 0)
 		gui.set_text(gui.get_node("ram_durability"), ram_durability)
+	
+	elseif message_id == hash("set_multiplier") then
+		gui.set_text(gui.get_node("multiplier"), message.multiplier)
 	end
 end
 
