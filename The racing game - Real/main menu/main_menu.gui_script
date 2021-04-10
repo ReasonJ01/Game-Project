@@ -21,7 +21,9 @@ function on_message(self, message_id, message, sender)
 	-- Remove this function if not needed
 end
 
+-- When a button is clicked
 function button_click(self, node)
+	-- Find out which node is clicked and load that node via the controller
 	if node == gui.get_node("upgrade") then
 		msg.post("controller:/controller_object#controller", "load_proxy", {name = "upgrade"})
 
@@ -38,9 +40,9 @@ end
 
 function on_input(self, action_id, action)
 	--Check if mouse button clicked/ screen pressed
-
 	if action_id == hash("touch") then
-		
+
+		-- Check if a gui button is clicked, animate that button then call button click
 		if gui.pick_node(gui.get_node("upgrade"), action.x, action.y) then
 			gui.play_flipbook(gui.get_node("upgrade"), "bar_clicked", button_click)
 

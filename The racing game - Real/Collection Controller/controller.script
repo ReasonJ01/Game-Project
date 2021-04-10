@@ -1,17 +1,16 @@
 require "modules.save_load"
 
 function init(self)
+	-- Initialise data if needed. From save_load module.
 	init_player_data(true, false)
 	init_score_data(false, nil, true)
-
-
 	
 	--When game is opened load the main menu screen
 	local current_proxy = "/controller_object#main_menu_proxy"
 	msg.post(".", "load_proxy", {name = "mainmenu"})
 	msg.post(".", "acquire_input_focus")
-	--local current_proxy = "/controller_object#main_menu_proxy"
 
+	-- Set the seed for rng. Ensures different every time.
 	math.randomseed(socket.gettime())
 end
 
@@ -19,9 +18,6 @@ function final(self)
 	-- Add finalization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
-end
-
-function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
@@ -56,7 +52,8 @@ function on_message(self, message_id, message, sender)
 		msg.post(current_proxy, "final")
 		msg.post(current_proxy, "unload")
 		
-		-- After posting a "load" msg the target proxy returns "proxy_loaded" to show it is ready to be enabled. target proxy must then be initialised, enabled
+		-- After posting a "load" msg the target proxy returns "proxy_loaded" to show it is ready to be enabled.
+		-- Target proxy must then be initialised, enabled
 	elseif message_id == hash("proxy_loaded") then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")
