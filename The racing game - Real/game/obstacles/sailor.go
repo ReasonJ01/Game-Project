@@ -1,6 +1,6 @@
 components {
   id: "sailor"
-  component: "/game/obstacles/sailor.script"
+  component: "/game/obstacles/power_up.script"
   position {
     x: 0.0
     y: 0.0

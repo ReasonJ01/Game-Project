@@ -10,20 +10,16 @@ function init(self)
 	msg.post(".", "load_proxy", {name = "mainmenu"})
 	msg.post(".", "acquire_input_focus")
 
-	-- Set the seed for rng. Ensures different every time.
+	-- Set the seed for rng. Ensures different course every time.
 	math.randomseed(socket.gettime())
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("load_proxy") then
 
-			-- Each "load_proxy" message carries the name of the proxy to load.
+		-- Each "load_proxy" message carries the name of the proxy to load.
+		-- Proxies are defined in the controller collection
+		-- Previously loaded collection geys unloaded to save on system resources
 		if message.name == "upgrade" then
 			msg.post(".", "unload_proxy")
 			msg.post("/controller_object#upgrade_proxy", "load")
@@ -61,21 +57,4 @@ function on_message(self, message_id, message, sender)
 		-- track the current proxy for unloading purposes
 		current_proxy = sender
 	end
-end
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

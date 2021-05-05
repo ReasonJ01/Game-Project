@@ -1,5 +1,4 @@
-
-
+-- Spawn an obstacle at a random x position, at the top of the screen with a specifoed speed
 function create()
 		spawn_chance = math.random(1,100)
 		if spawn_chance <= 10 then
@@ -15,82 +14,45 @@ function create()
 end
 
 function init(self)
-
-	file = io.open("data.txt", "w")
 	spawn_rate = 4
 	width, height = window.get_size()
 	speed = 400
 	elapsed = 0
-
 end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 
 function update(self, dt)
 	-- Sound processing from https://defold.com/manuals/sound/
 	for i, group_hash in ipairs(sound.get_groups()) do
 		local left_rms, right_rms = sound.get_rms(group_hash, 2048 / 65536.0)
+		
 		-- If no music playing then use standard spawning method
 		if right_rms == 0 then
+			-- elapsed is timer to determine when to spawn
 			elapsed = elapsed - dt
+			--Limit spawn rate to prevent extreme values
 			if elapsed <= 0 and spawn_rate < 10 then
+
+				-- Increase spawn rate and decrease time between spawns, then spawn
 				spawn_rate = spawn_rate + 0.01
 				elapsed = 1/spawn_rate
 				create()
+
+				-- Increase obstacle movement speed
 				if speed <= 800 then
 					speed = speed + 2
 				end
+
+				-- If max spawn_rate reached then reduce to half to create cyclical pattern
 			elseif spawn_rate >= 10 then
 				spawn_rate = 5
 			end
-		-- Spawn enemies at certain parts during the song
+			
+			-- Spawn enemies at certain parts during the song
+			-- Spawn threshold dtermined through analysis of rms of music. See documentation Moving Obstacles > Feedback 2
 		elseif right_rms >= 0.28 then
 			--Set constant, fast speed
 			speed = 700
 			create()
 		end
 	end
-end
-
-
-function _update(self, dt)
-	elapsed = elapsed - dt
-	if elapsed <= 0 and spawn_rate < 10 then
-		spawn_rate = spawn_rate + 0.01
-		elapsed = 1/spawn_rate
-		create()
-		if speed <= 800 then
-			speed = speed + 2
-		end
-	elseif spawn_rate >= 10 then
-		spawn_rate = 5
-	end
-end
-
-
-
-function on_message(self, message_id, message, sender)
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

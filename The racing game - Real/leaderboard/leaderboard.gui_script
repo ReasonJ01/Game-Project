@@ -1,26 +1,6 @@
 require "modules.save_load"
 
 
---Sort the list of scores high -low
-function _sort()
-	--for every position in the list
-	for j=1,11 do
-		--Compare the value of each position to the one before it
-		for i=2,11 do
-			
-			a = scores[tostring(i-1)]
-			b = scores[tostring(i)]
-			
-			--Set the earlier position i.e. the position of the bigger number to the biggest of the two values
-			scores[tostring(i-1)] = math.max(a,b)
-			--Set the later, i.e. the position of the lower number to the smaller of the two values
-			scores[tostring(i)] = math.min(a,b)
-			--pprint(scores)
-		end
-	end
-end
-
-
 -- Update the list of scores in the gui
 function update_list()
 	for i=1, 10 do
@@ -30,8 +10,8 @@ function update_list()
 	end
 end
 
-
 function init(self)
+	-- Input focus and load, sort scores
 	msg.post(".", "acquire_input_focus")
 	scores = load("score_data", nil, true)
 	sort(scores)
@@ -40,19 +20,8 @@ function init(self)
 end
 
 function final(self)
+	-- Save scores
 	save("score_data", scores, true)
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
 end
 
 function on_input(self, action_id, action)
@@ -73,11 +42,4 @@ function on_input(self, action_id, action)
 		end
 		gui.play_flipbook(gui.get_node("back_box"), "released")
 	end
-end
-
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

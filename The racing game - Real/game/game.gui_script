@@ -4,7 +4,7 @@ function init(self)
 	scores = load("score_data", nil, false)
 	sort(scores)
 	msg.post(".", "acquire_input_focus")
-	-- Disable play button, exit button, game over scrren
+	-- Disable play button, exit button, game over screen so they cant be accidentally pressed
 	gui.set_enabled(gui.get_node("play"), false)
 	gui.set_enabled(gui.get_node("exit"), false)
 	gui.set_enabled(gui.get_node("gameover"), false)
@@ -22,12 +22,9 @@ function final(self)
 	-- Save currency to player_data
 	currency = load("player_data", "currency", false)
 	save("player_data", {currency = currency + tonumber(gui.get_text(gui.get_node("currency")))}, true)
+	-- Save most recent score scores file
 	scores["11"] = tonumber(gui.get_text(score_node))
 	save("score_data", scores, true)
-end
-
-function update(self, dt)
-	
 end
 
 function unpause()
@@ -47,20 +44,25 @@ function on_message(self, message_id, message, sender)
 			gui.set_enabled(gui.get_node("gameover"), true)
 			-- Sets game over score value to the players score
 			gui.set_text(gui.get_node("go_score"), gui.get_text(gui.get_node("score")))
+			-- Show high score
 			gui.set_text(gui.get_node("go_highscore"), scores["1"])
+			-- Show currency
 			gui.set_text(gui.get_node("currency"), math.floor(gui.get_text(gui.get_node("score")) / 50))
+
+			
 			gui.set_enabled(gui.get_node("exit"), true)
 		else 
 			gui.set_enabled(gui.get_node("play"), true)
 		end
+		
 		--Recieved from player.script: line 51
 	elseif message_id == hash("increase_score") then
 		gui.set_text(score_node, gui.get_text(score_node) + message.value)
-
+		-- Recieved from player.script, power_up.script
 	elseif message_id == hash("set_ram") then
 		ram_durability = (message.durability or ram_durability) + (message.addition or 0)
 		gui.set_text(gui.get_node("ram_durability"), ram_durability)
-	
+		-- Recieved from player.script
 	elseif message_id == hash("set_multiplier") then
 		gui.set_text(gui.get_node("multiplier"), message.multiplier)
 	end
@@ -77,13 +79,13 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	--When button released load
+	--When button released and elements are enabled show game over or continue
 	if action_id == hash("space") and action.released and (gui.is_enabled(gui.get_node("play")) or gui.is_enabled(gui.get_node("exit"))) then
 			-- If play clicked and player has lives
 		if lives > 0 then
 			-- Hide play button
 			gui.set_enabled(gui.get_node("play"), false)
-			-- Unpause game
+			-- Unpause game sent to player.script
 			msg.post("/player#player", "unpause")
 			-- Get the current life icon	
 			current_life = "live" .. lives
@@ -96,13 +98,8 @@ function on_input(self, action_id, action)
 			-- Load main menu
 			msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
 		end
+		-- Button animations
 		gui.play_flipbook(gui.get_node("play"), "released")
 		gui.play_flipbook(gui.get_node("exit"), "released")
 	end
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

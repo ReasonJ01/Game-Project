@@ -1,18 +1,13 @@
 --Create speed property
 go.property("speed", 0)
-go.property("bg", false)
 
 function init(self)
+	-- Make the obstacle swerve towwards the players position
 	go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, go.get_position("player").x, go.EASING_INQUAD, 5)
 end
 
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function update(self, dt)
+	-- Move object
 	pos = go.get_position()
 	pos.y = pos.y - self.speed * dt
 	--If off screen
@@ -21,7 +16,6 @@ function update(self, dt)
 	end
 
 	go.set_position(pos)
-
 end
 
 -- timer.delay requires function for callback parameter.
@@ -30,30 +24,12 @@ function delete()
 end
 
 function on_message(self, message_id, message, sender)
+	--If collides
 	if message_id == hash("collision_response") then
 		-- Same speed as background there appears to stop
 		self.speed = 300
 		-- Play explosion then wait enough time for explosion to show then delete
-		--sprite.play_flipbook(msg.url(nil,nil,"sprite"), "explosion_wreck")
 		msg.post("#sprite", "play_animation", {id = hash("explosion")})
 		timer.delay(0.25, false, delete)
 	end
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

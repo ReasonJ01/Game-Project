@@ -1,0 +1,30 @@
+--Create speed property
+go.property("speed", 0)
+
+function init(self)
+	-- Make the power_up spin
+	url = msg.url()
+	go.animate(go.get_id(), "euler.z", go.PLAYBACK_LOOP_PINGPONG, 180, go.EASING_INSINE, 15)
+	url.fragment = "sprite"
+	go.animate(url, "tint.y", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INSINE, 1.5)
+end
+
+function update(self, dt)
+	--Move the object, delete if off screen
+	pos = go.get_position()
+	pos.y = pos.y - self.speed * dt
+
+	if pos.y <= -100 then 
+		go.delete()
+	end
+	go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+	-- If collides with player then add an extra ram durability to the player
+	-- goes to game.gui_script
+	if message_id == hash("collision_response") and message.other_group == hash("player") then
+		msg.post("/gui#game", "set_ram", { addition = 1 })
+	end
+	go.delete()
+end

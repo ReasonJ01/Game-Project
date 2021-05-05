@@ -93,41 +93,6 @@ function removeData(save_file, key, verbose)
 	end
 end
 
--- This will check to see if a player_data file exists, if not a new one is created. Takes boolean for extra info printed to console.
-function init_player_data_(verbose)
-	-- Skip use of io for HTML5
-	if sys.get_sys_info()["system_name"] == "HTML5" then
-		skip_io = true
-	end
-	-- Find where save file should be
-	local file_path = sys.get_save_file("Boat_Racer","player_data")
-	
-	-- Can't use io in html5.
-	if not skip_io then
-		--Try to open the save file in read mode. 
-		exists = io.open(file_path, "r")
-		
-		-- io.read returns nil if the file can't be found
-		if exists and not skip then
-			
-			-- If the file exists then close it and no further action is needed
-			io.close(exists)
-			
-			if verbose then
-				print("player_data found at", file_path)
-			end
-		else
-			if verbose then
-				print("player_data not found at", file_path, "creating player_data \n")
-			end
-			-- Create a player_data file with starting values
-			save("player_data", {strafe_speed = 100, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
-		end
-	else
-		save("player_data", {strafe_speed = 100, ram_durability = 0, score_mult = 1, currency = 300}, verbose or false)
-	end
-end
-
 --Used to either create/overwrite player_data.
 -- takes 2 bools, verbose for extra infomation, overwrite to specify if an existing file should be overwritten
 function init_player_data(verbose, overwrite)
@@ -143,61 +108,10 @@ function init_player_data(verbose, overwrite)
 	end
 end
 
-
-
--- Will create either a zerod table or a table of random ints 1-1000. Tables have 10 elements. Takes 3 bools.
--- rand will create the random table, verbose will print extra info.Overwrite will overwrite existing score_data.
-function init_score_data_(overwrite, rand,verbose)
-	-- Skip use of io
-	if sys.get_sys_info()["system_name"] == "HTML5" then
-		skip_io = true
-	end
-	overwrite = overwrite or false
-	rand = rand or false
-	verbose = verbose or false
-	scores = {}
-
-	-- Find where save file should be
-	local file_path = sys.get_save_file("Boat_Racer","score_data")
-	if not skip_io then
-		-- Try to open the save file in read mode
-			exists = io.open(file_path, "r")
-		-- io.read returns nil if the file can't be found
-		if exists and not overwrite then
-			-- If the file exists then close it and no further action is needed
-			io.close(exists)
-			if verbose then
-				print("score_data found at", file_path)
-			end
-		else
-			-- File needs to be closed if being overwritten
-			io.close(exists)
-			if verbose then
-				print("creating score_data at ", file_path)
-			end
-			-- Create a player_data file with starting values
-			for i=1, 11 do
-				if rand then
-					scores[i] = math.random(1, 1000)
-				else
-					scores[i] = 0
-				end
-			end
-			save("score_data", scores, verbose)
-		end
-	else
-		for i=1, 11 do
-			if rand then
-				scores[i] = math.random(1, 1000)
-			else
-				scores[i] = 0
-			end
-		end
-		save("score_data", scores, verbose)
-	end
-end
-
-
+-- Checks to see if score data exists and creates it if not.
+-- Takes bool overwrite: whether to overwrite existing data.
+-- Bool rand: Whether to initialise as scores as random values (for testing sort)
+-- Bool verbose: whether to print extra information
 function init_score_data(overwrite, rand,verbose)
 	scores = load("score_data")
 	if not scores[1] or overwrite then
@@ -215,7 +129,7 @@ function init_score_data(overwrite, rand,verbose)
 	end
 end
 
-
+-- Bubble sort
 -- Scores should be a table of length 11
 --Sort the list of scores high -low
 function sort(scores)
@@ -231,7 +145,6 @@ function sort(scores)
 			scores[tostring(i-1)] = math.max(a,b)
 			--Set the later, i.e. the position of the lower number to the smaller of the two values
 			scores[tostring(i)] = math.min(a,b)
-			--pprint(scores)
 		end
 	end
 end

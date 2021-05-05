@@ -1,12 +1,10 @@
 --Create speed property
 go.property("speed", 0)
-go.property("bg", false)
 
 function init(self)
-
 	width, height = window.get_size()
 
-	-- Initialise cpsts for pathfinding
+	-- Initialise costs for pathfinding
 	west = 0
 	east = 0
 	-- Construct url to sprite
@@ -17,20 +15,14 @@ function init(self)
 	go.animate(url, "tint.x", go.PLAYBACK_LOOP_PINGPONG, 3, go.EASING_INSINE, 1.5)
 end
 
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function update(self, dt)
 	pos = go.get_position()
 	-- This calculates a y coordinate for a given x coordinate to make a semi circle, of radius 400, of points spaced 50 apart.
-	-- The semi circle is centred on the player. They will be used as an end-point for the raycasting
+	-- The semi circle is centred on the obstacle. They will be used as an end-point for the raycasting
 	for i = pos.x - 400, pos.x + 400, 50 do
 
 		y = (i-pos.x)^2
+		
 		-- This num is the radius squared
 		y = 160000 - (y)
 		y = math.sqrt(y)
@@ -39,7 +31,7 @@ function update(self, dt)
 		-- Store the point as a vector
 		point = vmath.vector3(i, y, pos.z)
 
-		-- Raycasting returns information on nay collisions 
+		-- Raycasting returns information on any collisions 
 		-- Ray starts at player pos, ends at the calc'ed point. Only collides with the player and the edges of the screen
 		result = physics.raycast(pos, point, { hash("player"), hash("bounds") }, false)
 		-- If there is a collision 
@@ -56,7 +48,7 @@ function update(self, dt)
 					west = west + (1/result.fraction)
 				end
 			else
-				-- If the obstacle on the east is the player
+				-- If the obstacle to the east is the player
 				if result.group == hash("player") then
 					-- Increase the cost of moving west
 					west = west + (1/result.fraction)
@@ -107,26 +99,7 @@ function on_message(self, message_id, message, sender)
 		-- Same speed as background there appears to stop
 		self.speed = 300
 		-- Play explosion then wait enough time for explosion to show then delete
-		--sprite.play_flipbook(msg.url(nil,nil,"sprite"), "explosion_wreck")
 		msg.post("#sprite", "play_animation", {id = hash("explosion")})
 		timer.delay(0.25, false, delete)
 	end
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

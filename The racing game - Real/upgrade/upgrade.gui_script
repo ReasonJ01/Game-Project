@@ -17,7 +17,7 @@ function update_shop()
 		gui.play_flipbook(gui.get_node("strafe_tick"), "iconCheck_beige")
 	end
 
-	
+	-- Same as for strafe speed
 	gui.set_text(gui.get_node("current_ram"), player_data["ram_durability"])
 	gui.set_text(gui.get_node("upgraded_ram"), player_data["ram_durability"] + 1)
 	
@@ -43,7 +43,7 @@ function update_shop()
 		gui.play_flipbook(gui.get_node("mult_tick"), "iconCheck_beige")
 	end
 
-	
+	-- Show players currency
 	gui.set_text(gui.get_node("currency"), player_data["currency"])
 
 end
@@ -61,29 +61,29 @@ function final(self)
 	save("player_data", player_data, true)
 end
 
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function on_message(self, message_id, message, sender)
-end
-
 function button_clicked(self, node)
+	--Check if button clicked
+	
 	if node == gui.get_node("back_box") then
+		-- load menu screen
 		msg.post("controller:/controller_object#controller", "load_proxy", {name = "mainmenu"})
-		
+
+		-- Check if player has enough currency
 	elseif node == gui.get_node("buy_strafe") and player_data["currency"] >= strafe_price then
+		-- subtract cost from their currency
 		player_data["currency"] = player_data["currency"] - strafe_price
+		-- Apply upgrade
 		player_data["strafe_speed"] = player_data["strafe_speed"] + 10
+		-- Update values
 		update_shop()
-		
+
+		-- Same as previous
 	elseif node == gui.get_node("buy_ram") and player_data["currency"] >= ram_price then
 		player_data["currency"] = player_data["currency"] - ram_price
 		player_data["ram_durability"] = player_data["ram_durability"] + 1
 		update_shop()
-
+		
+		-- Same as previous
 	elseif node == gui.get_node("buy_mult") and player_data["currency"] >= mult_price then
 		player_data["currency"] = player_data["currency"] - mult_price
 		player_data["score_mult"] = player_data["score_mult"] + 0.01
@@ -92,7 +92,7 @@ function button_clicked(self, node)
 	end
 end
 
-
+--Handle button clicks, animations
 function on_input(self, action_id, action)
 	-- if button clicked
 	if action_id == hash("touch") and action.released then
@@ -112,11 +112,4 @@ function on_input(self, action_id, action)
 			
 		end
 	end
-end
-
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

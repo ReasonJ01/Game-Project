@@ -4,13 +4,13 @@ require "modules.save_load"
 --Create ignore property, set to false
 go.property("ignore_collisions", false)
 
---Increaes the score earned over time. 
+--Increaes the score earned over time. Sent to game.gui_script
 function increase_base_score()
 	base_score = base_score + 1
 	msg.post("/gui#game", "set_multiplier", {multiplier = multiplier * base_score})
 end
 
---Function adapted from  https://defold.com/examples/physics/raycast/
+--Function adapted from  https://defold.com/examples/physics/raycast/ for self playing visuals
 local function draw_line(from, to, color)
 	msg.post("@render:", "draw_line", { start_point = from, end_point = to, color = color })
 end
@@ -53,10 +53,13 @@ function init(self)
 
 	--Every 10 seconds the score earned per update increaes by 1
 	timer.delay(7, true, increase_base_score)
+
+	-- For implimenting ram functionality
+	id_to_ignore = ""
 end
 
 function final(self)
-	--Reset time step to default
+	--Reset time step to default from paused state
 	msg.post("controller:/controller_object#game_proxy", "set_time_step", {factor = 1, mode = 1})
 	
 	-- Stop music and raycasting.
@@ -149,7 +152,7 @@ function update(self, dt)
 	self.speed = 0
 	total = 0
 
-	--Update the score shown in the gui.
+	--Update the score shown in the gui. Sent to game.gui_script
 	msg.post("/gui#game", "increase_score", {value = math.ceil(base_score * multiplier)})
 end
 
@@ -169,11 +172,11 @@ function collision(self)
 	msg.post("controller:/controller_object#game_proxy", "set_time_step", {factor = 0, mode = 1})
 	paused = true
 	
-	-- stop score from increasing and update gui
+	-- stop score from increasing and update game.gui_script
 	base_score = 0
 	msg.post("/gui#game", "set_multiplier", {multiplier = multiplier + base_score})
 	
-	-- Set player sprite back to ship
+	-- Set player sprite back to ship from explosion
 	sprite.play_flipbook("/player#sprite", "ship")
 	
 	-- move player to middle of screen
@@ -181,7 +184,7 @@ function collision(self)
 	pos.x = width/2
 	go.set_position(pos)
 
-	-- Show "play" button
+	-- Show "play" button. Sent to game.gui_script
 	msg.post("/gui#game", "show_play")
 end
 
@@ -194,15 +197,20 @@ end
 
 function on_message(self, message_id, message, sender)
 	-- collision_response is sent after any collision, only acknowledge if not ignoring collisions and it is not a powerup
-	if message_id == hash("collision_response") and not self.ignore_collisions and message.other_group ~= hash("power_up") then
+	-- or if it is not the obstacle that collided with the ram (each collision sends a message every frame)
+	if message_id == hash("collision_response") and not self.ignore_collisions and message.other_group ~= hash("power_up") and message.other_id ~= hash(id_to_ignore) then
 		
-		-- If collision is with tip of ship and there is still ram durability then 
-		if sender == msg.url(nil, "player", "ship_tip_collision") and ram_durability > 0 then
-			-- Ignore collisions
-			self.ignore_collisions = true
-			
+
+		-- BATTERING RAM
+		
+		-- If collision is with tip of ship and there is still ram durability then
+		-- Also makes sure the the collision is with an obstacle not the map
+		if sender == msg.url(nil, "player", "ship_tip_collision") and ram_durability > 0 and message.other_group ~= hash("map") then
+
+			id_to_ignore = message.other_id
+
 			-- Glowing effect
-			go.animate("/player#sprite", "tint.w", go.PLAYBACK_LOOP_PINGPONG, 2, go.EASING_INSINE, 1.5)
+			go.animate("/player#sprite", "tint.w", go.PLAYBACK_ONCE_PINGPONG, 2, go.EASING_INSINE, 0.2)
 			
 			-- Reduce ram_durability
 			ram_durability = ram_durability - 1
@@ -210,9 +218,10 @@ function on_message(self, message_id, message, sender)
 			-- Update gui
 			msg.post("/gui#game", "set_ram", { durability = ram_durability })
 			
-			-- Just long enough for the first collision
-			timer.delay(0.4, false, endInvincibility)
 		else
+
+			-- NORMAL COLLISIONS
+			
 			--Ignore collisions and stop particle fx
 			self.ignore_collisions = true
 			particlefx.stop("/player#water")
@@ -245,6 +254,9 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
+
+	-- MOVEMENT
+	
 	--Move negative for left, positive for right
 	if action_id == hash("left") then
 		self.speed =self.speed + -(self.base_speed + strafe_speed)
@@ -254,7 +266,10 @@ function on_input(self, action_id, action)
 		self.speed = self.speed + self.base_speed + strafe_speed
 	end
 
-		-- Toggle raycasting
+
+	-- GAMEMODE TOGGLES
+	
+	-- Toggle raycasting
 	if action_id == hash("raycast") and action.released then
 		if raycasting then
 			raycasting = false
@@ -283,7 +298,7 @@ function on_input(self, action_id, action)
 			go.animate("player#sprite", "tint", go.PLAYBACK_LOOP_PINGPONG, vmath.vector4(1, 0, 1, 1.5), go.EASING_INSINE, 1, 1)
 			
 		else
-			--If sound is being played for the first time then begin the sound and glwoing effects
+			--If sound is being played for the first time then begin the sound and glowing effects
 			sound.play("/obstacle_gen#sound")
 			sound_played = true
 			music = true
@@ -291,10 +306,4 @@ function on_input(self, action_id, action)
 			go.animate("player#sprite", "tint", go.PLAYBACK_LOOP_PINGPONG, vmath.vector4(1, 0, 1, 1), go.EASING_INSINE, 1, 1)
 		end
 	end
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end

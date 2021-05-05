@@ -1,19 +1,9 @@
 function init(self)
-	--Create blank segment for easy start. Spawned 
+	--Create blank segment for easy start. init variables and get screen dimensions
 	factory.create("/map_gen#segment3_fact",vmath.vector3(0,640,0))
 	elapsed = 0
 	width, height = window.get_size()
 	
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-
 end
 
 -- spawns a random map segment. chance is a int between 1 and 100, or random  int between 1 and 100 if nil.
@@ -30,62 +20,25 @@ function spawn_rand_segment(chance, thresholds, pos)
 		-- Calculate an x offset to vary the map 
 		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
 		x = pos[1] + (math.random(-12,15) * 64)
-		
 		local id = factory.create("/map_gen#segment1_fact", vmath.vector3(x, pos[2], pos[3]), nil,{speed = 300})
-		--table.insert(segments, msg.url("game",id, "segment_script"))
-		--print(id, "added")
-		--print("spawn 1")
 
 	elseif chance <= thresholds[2] then 
-		-- Calculate an x offset to vary the map 
-		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
 		x = pos[1] + (math.random(-7,11) * 64)
-		
 		local id = factory.create("/map_gen#segment2_fact", vmath.vector3(x, pos[2], pos[3]), nil, {speed = 300})
-		--table.insert(segments, msg.url("game",id, "segment_script"))
-		--print(msg.url("game",id, "segment_script"), "added")
-		--print("spawn 2")
 
 	elseif chance <= thresholds[3] then
 		local id = factory.create("/map_gen#segment3_fact", vmath.vector3(pos[1], pos[2], pos[3]), nil,{speed = 300})
-		--table.insert(segments, msg.url("game",id, "segment_script"))
-		--print(id, "added")
-		--print("spawn 3")
 
 	elseif chance <= thresholds[4] then
-		-- Calculate an x offset to vary the map 
-		-- Random number bounds based off of how many tiles the tilemap can be shifted left/right and still keep the content on screen, * 64 because that is the tile size.
 		x = pos[1] + (math.random(-4,9) * 64)
-		--print("offset", x)
-		
 		local id = factory.create("/map_gen#segment4_fact", vmath.vector3(x, pos[2], pos[3]), nil,{speed = 300})
-		--table.insert(segments, msg.url("game",id, "segment_script"))
-		--print(id, "added")
-		--print("spawn 4")
 	end
 end
 
 function on_message(self, message_id, message, sender)
-
 	if message_id == hash("bottom") then
+		-- Spawn using default values
 		spawn_rand_segment(nil, nil)
 	end
 end
 
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
-end
